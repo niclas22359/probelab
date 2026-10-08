@@ -1,11 +1,11 @@
 {
-  "name": "examplelab-mcp",
+  "name": "probelab-mcp",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "MCP bridge for ExampleLab (stdio -> POST /api/mcp). No database access, no tool list of its own.",
+  "description": "MCP bridge for ProbeLab (stdio -> POST /api/mcp). No database access, no tool list of its own.",
   "bin": {
-    "examplelab-mcp": "server.mjs"
+    "probelab-mcp": "server.mjs"
   },
   "scripts": {
     "start": "node server.mjs"

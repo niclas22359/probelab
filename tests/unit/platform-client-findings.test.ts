@@ -60,7 +60,7 @@ function contextBody(patch: Record<string, unknown> = {}): Record<string, unknow
     collections: [],
     settings: { membersMayShareOrg: true, membersMayCreateCollections: true },
     product: {
-      key: "examplelab",
+      key: "probelab",
       productRole: "user",
       mayPublish: false,
       releaseStep: null,
@@ -103,7 +103,7 @@ beforeEach(() => {
   vi.stubEnv("ALLOW_LOCAL_JWT", "");
   vi.stubEnv("NEXT_PUBLIC_PLATFORM_URL", "https://suite.test");
   vi.stubEnv("PLATFORM_API_URL", "https://platform.test");
-  vi.stubEnv("PLATFORM_API_KEY", "examplelab-service-key");
+  vi.stubEnv("PLATFORM_API_KEY", "probelab-service-key");
   fetchMock = vi.fn();
   vi.stubGlobal("fetch", fetchMock);
   __clearAccessCacheForTests();
@@ -203,7 +203,7 @@ describe("[B15] an unreadable /me answer is not cached as 'no access'", () => {
 describe("[B17] the Suite gate reason 'organisation' is passed through", () => {
   it("open because the organisation is on the exception list", async () => {
     fetchMock.mockImplementation(async () =>
-      json({ allowed: true, reason: "organisation", lab: { key: "examplelab", name: "ExampleLab", enabled: false } }),
+      json({ allowed: true, reason: "organisation", lab: { key: "probelab", name: "ProbeLab", enabled: false } }),
     );
     const gate = await getLabGate("token-anna");
     expect(gate.allowed).toBe(true);
@@ -219,7 +219,7 @@ describe("[P3] API keys act as their creator, checked per call", () => {
   });
 
   it("the key door takes the kind from the row: an ownerless USER row is 403, not a worker", async () => {
-    const plaintext = "examplelab_ownerless";
+    const plaintext = "probelab_ownerless";
     h.apiKey.findUnique.mockResolvedValue({
       id: "key-9",
       name: "ownerless",
@@ -318,7 +318,7 @@ describe("[P1] the AI and mail doors share readDoorConfig with the access door",
     refuseServiceKey();
     vi.stubEnv("PLATFORM_API_KEY", "changeme");
     expect(await complete(llmRequest)).toMatchObject({ ok: false, code: "DOOR_NOT_CONFIGURED" });
-    vi.stubEnv("PLATFORM_API_KEY", "examplelab-service-key");
+    vi.stubEnv("PLATFORM_API_KEY", "probelab-service-key");
     vi.stubEnv("PLATFORM_API_URL", "platform.test");
     expect(await sendMail(mailRequest)).toMatchObject({ ok: false, code: "DOOR_NOT_CONFIGURED" });
     expect(fetchMock).not.toHaveBeenCalled();

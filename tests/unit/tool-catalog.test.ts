@@ -34,11 +34,11 @@ describe("the template's catalogue", () => {
 
   it("carries exactly the markers of the contract", () => {
     expect(TOOL_DEFINITIONS.map((t) => [t.name, t.access, t.idempotent])).toEqual([
-      ["examplelab_list_notes", "read", true],
-      ["examplelab_get_note", "read", true],
-      ["examplelab_create_note", "write", false],
-      ["examplelab_update_note", "write", true],
-      ["examplelab_delete_note", "destructive", false],
+      ["probelab_list_notes", "read", true],
+      ["probelab_get_note", "read", true],
+      ["probelab_create_note", "write", false],
+      ["probelab_update_note", "write", true],
+      ["probelab_delete_note", "destructive", false],
     ]);
   });
 

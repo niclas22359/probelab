@@ -9,26 +9,26 @@ import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprot
  * This file knows no tools. The one truth about the tool catalogue is in the
  * app (`src/lib/mcp/catalog.ts`, served by `POST /api/mcp`); this bridge
  * PASSES THROUGH: `tools/list` and `tools/call` go as JSON-RPC over HTTP to
- * `${EXAMPLELAB_URL}/api/mcp` with the key from `EXAMPLELAB_API_KEY`.
+ * `${PROBELAB_URL}/api/mcp` with the key from `PROBELAB_API_KEY`.
  *
  * Why it exists: Claude Desktop and Claude Code speak MCP over stdio, not
  * over an address. HorAIzon takes the HTTP address directly.
  *
- *   EXAMPLELAB_URL         base URL of the instance (default http://localhost:3390)
- *   EXAMPLELAB_API_KEY     required; key from Settings → API keys
- *   EXAMPLELAB_TIMEOUT_MS  per call, default 15000
+ *   PROBELAB_URL         base URL of the instance (default http://localhost:3390)
+ *   PROBELAB_API_KEY     required; key from Settings → API keys
+ *   PROBELAB_TIMEOUT_MS  per call, default 15000
  *
  * stdout belongs to the transport. Everything for humans goes to stderr.
  */
 
-const API_URL = (process.env.EXAMPLELAB_URL ?? "http://localhost:3390").replace(/\/+$/, "");
-const API_KEY = process.env.EXAMPLELAB_API_KEY;
-const TIMEOUT_MS = Number(process.env.EXAMPLELAB_TIMEOUT_MS) || 15_000;
+const API_URL = (process.env.PROBELAB_URL ?? "http://localhost:3390").replace(/\/+$/, "");
+const API_KEY = process.env.PROBELAB_API_KEY;
+const TIMEOUT_MS = Number(process.env.PROBELAB_TIMEOUT_MS) || 15_000;
 const ENDPOINT = `${API_URL}/api/mcp`;
 const LIST_ONLY = process.argv.includes("--list");
 
 if (!API_KEY) {
-  process.stderr.write("[examplelab-mcp] EXAMPLELAB_API_KEY is not set. Create a key under Settings.\n");
+  process.stderr.write("[probelab-mcp] PROBELAB_API_KEY is not set. Create a key under Settings.\n");
   process.exit(1);
 }
 
@@ -102,12 +102,12 @@ if (LIST_ONLY) {
     for (const tool of result.tools ?? []) process.stdout.write(`${tool.name}\n`);
     process.exit(0);
   } catch (error) {
-    process.stderr.write(`[examplelab-mcp] tools/list at ${ENDPOINT} failed: ${error?.message ?? String(error)}\n`);
+    process.stderr.write(`[probelab-mcp] tools/list at ${ENDPOINT} failed: ${error?.message ?? String(error)}\n`);
     process.exit(1);
   }
 }
 
-const server = new Server({ name: "examplelab", version: "1.0.0" }, { capabilities: { tools: {} } });
+const server = new Server({ name: "probelab", version: "1.0.0" }, { capabilities: { tools: {} } });
 
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   const result = await rpc("tools/list");
@@ -124,4 +124,4 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 await server.connect(new StdioServerTransport());
-process.stderr.write(`[examplelab-mcp] ready, talking to ${ENDPOINT}.\n`);
+process.stderr.write(`[probelab-mcp] ready, talking to ${ENDPOINT}.\n`);

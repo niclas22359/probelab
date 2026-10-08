@@ -1,6 +1,6 @@
 # beyondles-lab — the template for a Beyondles Lab
 
-> **ExampleLab does nothing yet. Replace this sentence with what YOUR Lab does, and for whom.**
+> **ProbeLab does nothing yet. Replace this sentence with what YOUR Lab does, and for whom.**
 
 A Lab is a standalone tool under `<name>.beyondles.ai`: used internally,
 offered to customers, and attached to Beyondles HorAIzon as a tool. This

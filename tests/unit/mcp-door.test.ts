@@ -34,7 +34,7 @@ const ORG = "11111111-1111-4111-8111-111111111111";
 const USER = "33333333-3333-4333-8333-333333333333";
 const OWNER = "44444444-4444-4444-8444-444444444444";
 const COL = "55555555-5555-4555-8555-555555555555";
-const AUD = "examplelab";
+const AUD = "probelab";
 
 interface PersonAnswer {
   productRole?: "user" | "product_admin" | null;
@@ -80,7 +80,7 @@ function fakeFetch() {
       method: init?.method,
     });
     if (input === JWKS_URL) return Response.json(keyDocument());
-    const person = /\/api\/access\/orgs\/([^/]+)\/users\/([^/]+)\/context\?product=examplelab$/.exec(input);
+    const person = /\/api\/access\/orgs\/([^/]+)\/users\/([^/]+)\/context\?product=probelab$/.exec(input);
     if (person) {
       const answer = persons[decodeURIComponent(person[2])];
       if (!answer) return Response.json({ success: false, error: { code: "NOT_FOUND" } }, { status: 404 });
@@ -125,7 +125,7 @@ beforeEach(() => {
     });
   calls = [];
   vi.stubEnv("PLATFORM_API_URL", PLATFORM);
-  vi.stubEnv("PLATFORM_API_KEY", "examplelab-service-key");
+  vi.stubEnv("PLATFORM_API_KEY", "probelab-service-key");
   vi.stubEnv("ON_BEHALF_ISSUER", TEST_ISSUER);
   // A Suite address makes this a "server": no local fallback, the gate applies.
   vi.stubEnv("NEXT_PUBLIC_PLATFORM_URL", "https://suite.test");
@@ -133,7 +133,7 @@ beforeEach(() => {
   vi.stubEnv("ALLOW_LOCAL_JWT", "");
   vi.stubEnv("MCP_SELF_BASE_URL", "");
   vi.stubEnv("PORT", "");
-  vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://examplelab-staging.beyondles.ai");
+  vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://probelab-staging.beyondles.ai");
   // These tests pin the shared tool door's own token limit (1200); the Lab's
   // limit (src/lib/rate-limit.ts) is switched off here and tested on its own.
   vi.stubEnv("ON_BEHALF_RATE_LIMIT_PER_MINUTE", "0");
@@ -172,7 +172,7 @@ describe("requireApiKey: the token path (2.4)", () => {
     });
     expect(key.access).toMatchObject({ userId: USER, organisationId: ORG, productRole: "user", collections: [{ id: "c-sales" }] });
     expect(personCalls()).toHaveLength(1);
-    expect(personCalls()[0].headers["X-API-Key"]).toBe("examplelab-service-key");
+    expect(personCalls()[0].headers["X-API-Key"]).toBe("probelab-service-key");
     // Tokens are never checked against the release state (D6.3).
     expect(releaseCalls()).toHaveLength(0);
   });
@@ -214,7 +214,7 @@ describe("requireApiKey: the token path (2.4)", () => {
     expect(key.access.userId).toBe(OWNER);
     expect(key.createdByUserId).toBe(OWNER);
     expect(personCalls().map((c) => c.url)).toEqual([
-      `${PLATFORM}/api/access/orgs/${ORG}/users/${OWNER}/context?product=examplelab`,
+      `${PLATFORM}/api/access/orgs/${ORG}/users/${OWNER}/context?product=probelab`,
     ]);
 
     __clearAccessCacheForTests();
@@ -308,7 +308,7 @@ describe("requireApiKey: the token path (2.4)", () => {
 
   it("token and x-api-key together: 400 ambiguous_credential", async () => {
     const token = signToken({ aud: AUD, org: ORG, sub: USER });
-    const refused = await refusal(requireApiKey(req("/api/v1/notes", { ...bearer(token), "x-api-key": "examplelab_x" })));
+    const refused = await refusal(requireApiKey(req("/api/v1/notes", { ...bearer(token), "x-api-key": "probelab_x" })));
     expect(refused).toMatchObject({ status: 400, code: "ambiguous_credential" });
     expect(h.apiKey.findUnique).not.toHaveBeenCalled();
   });
@@ -335,7 +335,7 @@ describe("requireApiKey: the token path (2.4)", () => {
 });
 
 describe("requireApiKey: configuration and the key path", () => {
-  const WORKER_KEY = "examplelab_worker_secret";
+  const WORKER_KEY = "probelab_worker_secret";
 
   beforeEach(() => {
     h.apiKey.findUnique.mockImplementation(async ({ where }: { where: { keyHash: string } }) =>
@@ -369,7 +369,7 @@ describe("requireApiKey: configuration and the key path", () => {
   it("a key passes the release gate with the Lab's own service key", async () => {
     await requireApiKey(req("/api/v1/notes", { "x-api-key": WORKER_KEY }));
     expect(releaseCalls().map((c) => c.url)).toEqual([`${PLATFORM}/api/registry/released?organisationId=${ORG}`]);
-    expect(releaseCalls()[0].headers["X-API-Key"]).toBe("examplelab-service-key");
+    expect(releaseCalls()[0].headers["X-API-Key"]).toBe("probelab-service-key");
   });
 
   it("a key of an organisation the Lab is not released for: 403 lab_not_released", async () => {
@@ -457,11 +457,11 @@ describe("POST /api/mcp", () => {
     expect(res.status).toBe(200);
     const body = (await res.json()) as { result: { tools: Array<Record<string, unknown>> } };
     expect(body.result.tools.map((t) => t.name)).toEqual([
-      "examplelab_list_notes",
-      "examplelab_get_note",
-      "examplelab_create_note",
-      "examplelab_update_note",
-      "examplelab_delete_note",
+      "probelab_list_notes",
+      "probelab_get_note",
+      "probelab_create_note",
+      "probelab_update_note",
+      "probelab_delete_note",
     ]);
     expect(body.result.tools[0]).toMatchObject({
       title: "List notes",
@@ -474,13 +474,13 @@ describe("POST /api/mcp", () => {
     const log = vi.mocked(console.log);
     const token = signToken({ aud: AUD, org: ORG, sub: USER, cp: "bookinglab", jti: "aaaaaaaa-aaaa-4aaa-8aaa-000000000202" });
     const res = await mcpRoute(
-      req("/api/mcp", bearer(token), { method: "POST", body: rpc("tools/call", { name: "examplelab_list_notes", arguments: {} }) }),
+      req("/api/mcp", bearer(token), { method: "POST", body: rpc("tools/call", { name: "probelab_list_notes", arguments: {} }) }),
     );
     expect(res.status).toBe(200);
     const self = calls.find((c) => c.url.startsWith("http://127.0.0.1:3390/api/v1/notes"));
     expect(self?.headers).toEqual({ authorization: `Bearer ${token}` });
     expect(log.mock.calls.map((c) => String(c[0]))).toContain(
-      `[tool-door] via=on-behalf cp=bookinglab org=${ORG} sub=${USER} agent=- tool=examplelab_list_notes outcome=ok jti=aaaaaaaa-aaaa-4aaa-8aaa-000000000202`,
+      `[tool-door] via=on-behalf cp=bookinglab org=${ORG} sub=${USER} agent=- tool=probelab_list_notes outcome=ok jti=aaaaaaaa-aaaa-4aaa-8aaa-000000000202`,
     );
   });
 
@@ -525,19 +525,19 @@ describe("GET /api/mcp/describe", () => {
     expect(res.headers.get("cache-control")).toBe("no-store");
     const body = (await res.json()) as Record<string, unknown> & { tools: Array<Record<string, unknown>> };
     expect(body).toMatchObject({
-      product: "examplelab",
-      name: "ExampleLab",
+      product: "probelab",
+      name: "ProbeLab",
       version: "1.0.0",
       protocol: "mcp",
-      toolDoorUrl: "https://examplelab-staging.beyondles.ai/api/mcp",
-      toolPrefix: "examplelab_",
+      toolDoorUrl: "https://probelab-staging.beyondles.ai/api/mcp",
+      toolPrefix: "probelab_",
     });
     expect(body.tools.map((t) => [t.name, t.access, t.idempotent, t.capability, t.available])).toEqual([
-      ["examplelab_list_notes", "read", true, null, true],
-      ["examplelab_get_note", "read", true, null, true],
-      ["examplelab_create_note", "write", false, null, true],
-      ["examplelab_update_note", "write", true, null, true],
-      ["examplelab_delete_note", "destructive", false, null, true],
+      ["probelab_list_notes", "read", true, null, true],
+      ["probelab_get_note", "read", true, null, true],
+      ["probelab_create_note", "write", false, null, true],
+      ["probelab_update_note", "write", true, null, true],
+      ["probelab_delete_note", "destructive", false, null, true],
     ]);
     expect(body.tools[2].title).toEqual({ de: "Notiz anlegen", en: "Create a note" });
   });

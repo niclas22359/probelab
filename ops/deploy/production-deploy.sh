@@ -1,20 +1,20 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# Production deploy for EXAMPLELAB (main -> :__PROD_PORT__) on the Playground.
+# Production deploy for PROBELAB (main -> :__PROD_PORT__) on the Playground.
 # Called by the production watcher (playground-production-auto-deploy.sh) and
 # usable by hand. Allowed for: root, dev-* users (docker group is enough).
 # NO seed here, ever.
 #
-# Install: copy to /opt/scripts/examplelab-production-deploy.sh, replace
+# Install: copy to /opt/scripts/probelab-production-deploy.sh, replace
 # __PROD_PORT__, chmod 750.
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
-REPO="/opt/examplelab/production"
+REPO="/opt/probelab/production"
 BRANCH="main"
 PORT="__PROD_PORT__"
-LOG="/var/log/examplelab-production-deploy.log"
-BACKUPS="/opt/examplelab/backups"
+LOG="/var/log/probelab-production-deploy.log"
+BACKUPS="/opt/probelab/backups"
 
 say() { echo "[$(date '+%F %T')] $*" | tee -a "$LOG"; }
 
@@ -40,7 +40,7 @@ done
 
 say "[safety dump before migrations]"
 mkdir -p "$BACKUPS"
-docker exec examplelab-production-postgres-1 pg_dump -U examplelab -d examplelab -Fc > "$BACKUPS/pre-deploy-$(date +%Y%m%d-%H%M%S).dump"
+docker exec probelab-production-postgres-1 pg_dump -U probelab -d probelab -Fc > "$BACKUPS/pre-deploy-$(date +%Y%m%d-%H%M%S).dump"
 ls -t "$BACKUPS"/pre-deploy-*.dump 2>/dev/null | tail -n +6 | xargs -r rm --
 
 say "[migrate]"

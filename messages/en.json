@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "ExampleLab",
+    "appName": "ProbeLab",
     "save": "Save",
     "create": "Create",
     "delete": "Delete",
@@ -67,13 +67,13 @@
     "keyScopes": "Allowed (new keys: read only)"
   },
   "noAccess": {
-    "title": "No access to ExampleLab",
-    "body": "ExampleLab has not been assigned to you yet. An admin of your organisation gives it to you in the Beyondles Suite under Administration, Products and access.",
-    "titleBlocked": "ExampleLab is not released yet",
-    "bodyBlocked": "ExampleLab has not been released for your account in the Beyondles Suite yet.",
-    "bodyUnreachable": "The Beyondles Suite is currently unreachable, so ExampleLab stays closed as a precaution. Please try again later.",
-    "titleNotConfigured": "ExampleLab is not fully set up here yet",
-    "bodyNotConfigured": "This environment cannot ask the Beyondles platform who may use ExampleLab, so it stays closed for everyone. This is not about your account. The operator sets PLATFORM_API_URL and PLATFORM_API_KEY and restarts.",
+    "title": "No access to ProbeLab",
+    "body": "ProbeLab has not been assigned to you yet. An admin of your organisation gives it to you in the Beyondles Suite under Administration, Products and access.",
+    "titleBlocked": "ProbeLab is not released yet",
+    "bodyBlocked": "ProbeLab has not been released for your account in the Beyondles Suite yet.",
+    "bodyUnreachable": "The Beyondles Suite is currently unreachable, so ProbeLab stays closed as a precaution. Please try again later.",
+    "titleNotConfigured": "ProbeLab is not fully set up here yet",
+    "bodyNotConfigured": "This environment cannot ask the Beyondles platform who may use ProbeLab, so it stays closed for everyone. This is not about your account. The operator sets PLATFORM_API_URL and PLATFORM_API_KEY and restarts.",
     "titleAllowed": "You have access",
     "bodyAllowed": "This page is just a notice. Your account is enabled.",
     "signedInAs": "Signed in as {email} in organisation {organisation}.",

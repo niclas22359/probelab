@@ -1,4 +1,4 @@
-// ExampleLab — data model.
+// ProbeLab — data model.
 //
 // Tenant separation is NOT enforced by the database but by `src/lib/rbac.ts`
 // and the service layer: every query carries `organisationId`, and every

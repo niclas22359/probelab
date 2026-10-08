@@ -250,7 +250,7 @@ describe("one function, three doors: createNote", () => {
       }),
     );
     expect(rest.status).toBe(201);
-    const tool = await callTool("user_rw", "examplelab_create_note", {
+    const tool = await callTool("user_rw", "probelab_create_note", {
       title: "Plan",
       visibility: "private",
     });
@@ -301,7 +301,7 @@ describe("one function, three doors: createNote", () => {
       params,
     );
     expect(rest.status).toBe(200);
-    const tool = await callTool("user_delete", "examplelab_delete_note", {
+    const tool = await callTool("user_delete", "probelab_delete_note", {
       noteId: NOTE_ID,
     });
     expect(tool.result.isError).toBeUndefined();
@@ -390,7 +390,7 @@ describe("scopes", () => {
   });
 
   it("the MCP tool gets the same refusal, mapped once", async () => {
-    const tool = await callTool("user_read", "examplelab_update_note", {
+    const tool = await callTool("user_read", "probelab_update_note", {
       noteId: NOTE_ID,
       title: "y",
     });
@@ -408,11 +408,11 @@ describe("scopes", () => {
     expect(
       body.tools.map((t) => [t.name, t.scopes.join("+"), t.available]),
     ).toEqual([
-      ["examplelab_list_notes", "read", true],
-      ["examplelab_get_note", "read", true],
-      ["examplelab_create_note", "write", false],
-      ["examplelab_update_note", "write", false],
-      ["examplelab_delete_note", "write+notes:delete", false],
+      ["probelab_list_notes", "read", true],
+      ["probelab_get_note", "read", true],
+      ["probelab_create_note", "write", false],
+      ["probelab_update_note", "write", false],
+      ["probelab_delete_note", "write+notes:delete", false],
     ]);
   });
 });
@@ -428,7 +428,7 @@ describe("service errors map the same way at every door", () => {
     expect(await res.json()).toEqual({
       error: { code: "not_found", message: "Note not found." },
     });
-    const tool = await callTool("user_rw", "examplelab_get_note", {
+    const tool = await callTool("user_rw", "probelab_get_note", {
       noteId: NOTE_ID,
     });
     expect(tool.result.content[0].text).toBe(
@@ -513,7 +513,7 @@ describe("worker-triggered route POST /api/v1/worker/expire-notes", () => {
         actor: { system: true },
         line: {
           organisationId: ORG,
-          action: "examplelab.notes_expired",
+          action: "probelab.notes_expired",
           details: { deleted: 2, olderThanDays: 30 },
         },
       },
@@ -576,11 +576,11 @@ describe("rate limit at the door", () => {
 
   it("the MCP door has its own limit and answers JSON-RPC -32029", async () => {
     vi.stubEnv("MCP_RATE_LIMIT_PER_MINUTE", "1");
-    await callTool("user_rw", "examplelab_list_notes", {});
+    await callTool("user_rw", "probelab_list_notes", {});
     const res = await mcpRoute(
       req("/api/mcp", "user_rw", {
         method: "POST",
-        body: rpc("examplelab_list_notes", {}),
+        body: rpc("probelab_list_notes", {}),
       }),
     );
     expect(res.status).toBe(429);

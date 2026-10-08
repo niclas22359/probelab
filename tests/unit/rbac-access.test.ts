@@ -37,7 +37,7 @@ import { __clearAccessCacheForTests } from "@/lib/platform/access";
 import { requireAccessOrNull, requireFreshAccessOrNull, requireOrg } from "@/lib/rbac";
 
 const ME = "https://platform.test/api/access/me";
-const GATE = "https://suite.test/api/labs/examplelab/access";
+const GATE = "https://suite.test/api/labs/probelab/access";
 
 function meData(product: Record<string, unknown> = {}) {
   return {
@@ -50,7 +50,7 @@ function meData(product: Record<string, unknown> = {}) {
       collections: [],
       settings: { membersMayShareOrg: true, membersMayCreateCollections: true },
       product: {
-        key: "examplelab",
+        key: "probelab",
         productRole: "user",
         mayPublish: false,
         releaseStep: null,
@@ -75,8 +75,8 @@ beforeEach(() => {
   vi.stubEnv("ALLOW_LOCAL_JWT", "");
   vi.stubEnv("NEXT_PUBLIC_PLATFORM_URL", "https://suite.test");
   vi.stubEnv("PLATFORM_API_URL", "https://platform.test");
-  vi.stubEnv("PLATFORM_API_KEY", "examplelab-service-key");
-  gateBody = { allowed: true, reason: "enabled", lab: { key: "examplelab", name: "ExampleLab", enabled: true } };
+  vi.stubEnv("PLATFORM_API_KEY", "probelab-service-key");
+  gateBody = { allowed: true, reason: "enabled", lab: { key: "probelab", name: "ProbeLab", enabled: true } };
   meBody = meData();
   fetchMock = vi.fn(async (url: string) => {
     if (url.startsWith(GATE)) return new Response(JSON.stringify(gateBody), { status: 200 });

@@ -161,12 +161,12 @@ describe("POST /api/platform/reassign-owner", () => {
     expect(first.headers.get("cache-control")).toBe("no-store");
     expect(await first.json()).toEqual({
       success: true,
-      data: { source: "examplelab", organisationId: ORG, reassigned: { note: 2 }, revokedApiKeys: 1 },
+      data: { source: "probelab", organisationId: ORG, reassigned: { note: 2 }, revokedApiKeys: 1 },
     });
 
     const again = await POST(req(body, "right"));
     expect(((await again.json()) as { data: unknown }).data).toEqual({
-      source: "examplelab",
+      source: "probelab",
       organisationId: ORG,
       reassigned: { note: 0 },
       revokedApiKeys: 0,
@@ -175,7 +175,7 @@ describe("POST /api/platform/reassign-owner", () => {
     const unknown = "ffffffff-ffff-4fff-8fff-ffffffffffff";
     const none = await POST(req({ ...body, organisationId: unknown }, "right"));
     expect(((await none.json()) as { data: unknown }).data).toEqual({
-      source: "examplelab",
+      source: "probelab",
       organisationId: unknown,
       reassigned: { note: 0 },
       revokedApiKeys: 0,

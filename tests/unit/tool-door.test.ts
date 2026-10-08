@@ -43,7 +43,7 @@ afterEach(() => {
 });
 
 describe("onBehalfBearer", () => {
-  const token = signToken({ aud: "examplelab", org: ORG, sub: USER });
+  const token = signToken({ aud: "probelab", org: ORG, sub: USER });
 
   it("finds an on-behalf token in Authorization", () => {
     expect(onBehalfBearer(request({ authorization: `Bearer ${token}` }))).toEqual({ token });
@@ -53,12 +53,12 @@ describe("onBehalfBearer", () => {
     expect(onBehalfBearer(request({ authorization: "Bearer blk_0123456789abcdef" }))).toBeNull();
     const suiteJwt = `${Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url")}.e30.sig`;
     expect(onBehalfBearer(request({ authorization: `Bearer ${suiteJwt}` }))).toBeNull();
-    expect(onBehalfBearer(request({ "x-api-key": "examplelab_abc" }))).toBeNull();
+    expect(onBehalfBearer(request({ "x-api-key": "probelab_abc" }))).toBeNull();
     expect(onBehalfBearer(request({}))).toBeNull();
   });
 
   it("a token next to an x-api-key is ambiguous", () => {
-    expect(onBehalfBearer(request({ authorization: `Bearer ${token}`, "x-api-key": "examplelab_abc" }))).toEqual({
+    expect(onBehalfBearer(request({ authorization: `Bearer ${token}`, "x-api-key": "probelab_abc" }))).toEqual({
       ambiguous: true,
     });
   });
@@ -103,30 +103,30 @@ describe("checkOnBehalfToken", () => {
   });
 
   it("accepts a token for this audience and returns its claims", async () => {
-    const token = signToken({ aud: "examplelab", org: ORG, sub: USER, cp: "leadlab" });
-    const check = await checkOnBehalfToken(token, "examplelab");
-    expect(check).toMatchObject({ ok: true, claims: { aud: "examplelab", cp: "leadlab", org: ORG, sub: USER } });
+    const token = signToken({ aud: "probelab", org: ORG, sub: USER, cp: "leadlab" });
+    const check = await checkOnBehalfToken(token, "probelab");
+    expect(check).toMatchObject({ ok: true, claims: { aud: "probelab", cp: "leadlab", org: ORG, sub: USER } });
     expect(jwksCalls).toBe(1);
   });
 
   it("answers 503 without configuration, before anything is fetched", async () => {
     vi.stubEnv("ON_BEHALF_ISSUER", "");
-    const check = await checkOnBehalfToken(signToken({ aud: "examplelab", org: ORG }), "examplelab");
+    const check = await checkOnBehalfToken(signToken({ aud: "probelab", org: ORG }), "probelab");
     expect(check).toMatchObject({ ok: false, status: 503, code: "token_check_unavailable" });
     expect(jwksCalls).toBe(0);
   });
 
   it("answers 503 when the platform's keys cannot be fetched", async () => {
     jwksUp = false;
-    const check = await checkOnBehalfToken(signToken({ aud: "examplelab", org: ORG }), "examplelab");
+    const check = await checkOnBehalfToken(signToken({ aud: "probelab", org: ORG }), "probelab");
     expect(check).toMatchObject({ ok: false, status: 503, code: "token_check_unavailable" });
   });
 
   it("refuses another audience with 401 and one log line per reason and minute", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
     const foreign = signToken({ aud: "bookinglab", org: ORG, sub: USER });
-    const first = await checkOnBehalfToken(foreign, "examplelab");
-    const second = await checkOnBehalfToken(foreign, "examplelab");
+    const first = await checkOnBehalfToken(foreign, "probelab");
+    const second = await checkOnBehalfToken(foreign, "probelab");
     expect(first).toEqual({
       ok: false,
       status: 401,
@@ -139,16 +139,16 @@ describe("checkOnBehalfToken", () => {
 
   it("refuses an expired token and a token of another issuer with the same answer", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const expired = signToken({ aud: "examplelab", org: ORG, iat: Math.floor(Date.now() / 1000) - 3600 });
-    const otherIssuer = signToken({ aud: "examplelab", org: ORG, iss: "beyondles-platform:other" });
-    expect(await checkOnBehalfToken(expired, "examplelab")).toMatchObject({ ok: false, status: 401 });
-    expect(await checkOnBehalfToken(otherIssuer, "examplelab")).toMatchObject({ ok: false, status: 401 });
-    expect(await checkOnBehalfToken(vectors.tokens.VALID, "examplelab")).toMatchObject({ ok: false, status: 401 });
+    const expired = signToken({ aud: "probelab", org: ORG, iat: Math.floor(Date.now() / 1000) - 3600 });
+    const otherIssuer = signToken({ aud: "probelab", org: ORG, iss: "beyondles-platform:other" });
+    expect(await checkOnBehalfToken(expired, "probelab")).toMatchObject({ ok: false, status: 401 });
+    expect(await checkOnBehalfToken(otherIssuer, "probelab")).toMatchObject({ ok: false, status: 401 });
+    expect(await checkOnBehalfToken(vectors.tokens.VALID, "probelab")).toMatchObject({ ok: false, status: 401 });
   });
 
   it("builds one verifier per audience", async () => {
-    await checkOnBehalfToken(signToken({ aud: "examplelab", org: ORG }), "examplelab");
-    await checkOnBehalfToken(signToken({ aud: "examplelab", org: ORG }), "examplelab");
+    await checkOnBehalfToken(signToken({ aud: "probelab", org: ORG }), "probelab");
+    await checkOnBehalfToken(signToken({ aud: "probelab", org: ORG }), "probelab");
     await checkOnBehalfToken(signToken({ aud: "otherlab", org: ORG }), "otherlab");
     expect(jwksCalls).toBe(2);
   });
@@ -156,20 +156,20 @@ describe("checkOnBehalfToken", () => {
   it("limits 1,200 requests per minute per calling product and organisation", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-03T10:00:00Z"));
-    const token = signToken({ aud: "examplelab", org: ORG, cp: "leadlab" });
+    const token = signToken({ aud: "probelab", org: ORG, cp: "leadlab" });
     for (let i = 0; i < OBO_REQUESTS_PER_MINUTE; i += 1) {
-      expect((await checkOnBehalfToken(token, "examplelab")).ok).toBe(true);
+      expect((await checkOnBehalfToken(token, "probelab")).ok).toBe(true);
     }
-    const over = await checkOnBehalfToken(token, "examplelab");
+    const over = await checkOnBehalfToken(token, "probelab");
     expect(over).toMatchObject({ ok: false, status: 429, code: "rate_limited", retryAfterSeconds: 60 });
 
     // Another calling product for the same organisation has its own window.
-    const other = signToken({ aud: "examplelab", org: ORG, cp: "horaizon" });
-    expect((await checkOnBehalfToken(other, "examplelab")).ok).toBe(true);
+    const other = signToken({ aud: "probelab", org: ORG, cp: "horaizon" });
+    expect((await checkOnBehalfToken(other, "probelab")).ok).toBe(true);
 
     vi.setSystemTime(new Date("2026-10-03T10:01:00Z"));
-    const fresh = signToken({ aud: "examplelab", org: ORG, cp: "leadlab" });
-    expect((await checkOnBehalfToken(fresh, "examplelab")).ok).toBe(true);
+    const fresh = signToken({ aud: "probelab", org: ORG, cp: "leadlab" });
+    expect((await checkOnBehalfToken(fresh, "probelab")).ok).toBe(true);
   });
 });
 
@@ -190,12 +190,12 @@ describe("checkLabReleased", () => {
   const released = (value: boolean) => () =>
     Response.json({
       success: true,
-      data: { organisationId: ORG, product: "examplelab", kind: "lab", organisationStatus: "active", released: value },
+      data: { organisationId: ORG, product: "probelab", kind: "lab", organisationStatus: "active", released: value },
     });
 
   beforeEach(() => {
     vi.stubEnv("PLATFORM_API_URL", `${PLATFORM}/`);
-    vi.stubEnv("PLATFORM_API_KEY", "examplelab-service-key");
+    vi.stubEnv("PLATFORM_API_KEY", "probelab-service-key");
     vi.spyOn(console, "warn").mockImplementation(() => undefined);
   });
 
@@ -223,7 +223,7 @@ describe("checkLabReleased", () => {
       applied: true,
     });
     expect(calls[0].url).toBe(RELEASED_URL);
-    expect(calls[0].headers["X-API-Key"]).toBe("examplelab-service-key");
+    expect(calls[0].headers["X-API-Key"]).toBe("probelab-service-key");
     now += RELEASE_CACHE_MS - 1;
     await checkLabReleased(ORG, { localMode: false, fetchImpl, now: () => now });
     expect(calls).toHaveLength(1);
@@ -329,14 +329,14 @@ describe("checkLabReleased", () => {
 describe("describeToolDoor", () => {
   it("lists the tools in catalogue order with markers, availability and the door address", () => {
     const description = describeToolDoor({
-      product: "examplelab",
-      name: "ExampleLab",
+      product: "probelab",
+      name: "ProbeLab",
       version: "1.0.0",
-      toolPrefix: "examplelab_",
-      appUrl: "https://examplelab-staging.beyondles.ai/",
+      toolPrefix: "probelab_",
+      appUrl: "https://probelab-staging.beyondles.ai/",
       tools: [
         {
-          name: "examplelab_list_notes",
+          name: "probelab_list_notes",
           description: "List.",
           inputSchema: { type: "object", properties: {} },
           access: "read",
@@ -344,7 +344,7 @@ describe("describeToolDoor", () => {
           title: { de: "Notizen auflisten", en: "List notes" },
         },
         {
-          name: "examplelab_send",
+          name: "probelab_send",
           description: "Send.",
           inputSchema: { type: "object", properties: {} },
           access: "destructive",
@@ -354,18 +354,18 @@ describe("describeToolDoor", () => {
           scopes: ["write", "notes:delete"],
         },
       ],
-      isAvailable: (name) => name !== "examplelab_send",
+      isAvailable: (name) => name !== "probelab_send",
     });
     expect(description).toEqual({
-      product: "examplelab",
-      name: "ExampleLab",
+      product: "probelab",
+      name: "ProbeLab",
       version: "1.0.0",
       protocol: "mcp",
-      toolDoorUrl: "https://examplelab-staging.beyondles.ai/api/mcp",
-      toolPrefix: "examplelab_",
+      toolDoorUrl: "https://probelab-staging.beyondles.ai/api/mcp",
+      toolPrefix: "probelab_",
       tools: [
         {
-          name: "examplelab_list_notes",
+          name: "probelab_list_notes",
           title: { de: "Notizen auflisten", en: "List notes" },
           description: "List.",
           access: "read",
@@ -376,7 +376,7 @@ describe("describeToolDoor", () => {
           inputSchema: { type: "object", properties: {} },
         },
         {
-          name: "examplelab_send",
+          name: "probelab_send",
           title: { de: "Senden", en: "Send" },
           description: "Send.",
           access: "destructive",
@@ -406,7 +406,7 @@ describe("logToolCall", () => {
       organisationId: ORG,
       userId: USER,
       agentLevel: "private",
-      tool: "examplelab_list_notes",
+      tool: "probelab_list_notes",
       outcome: "ok",
       tokenId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
     });
@@ -416,13 +416,13 @@ describe("logToolCall", () => {
       organisationId: ORG,
       userId: null,
       agentLevel: null,
-      tool: "examplelab_get_note",
+      tool: "probelab_get_note",
       outcome: "error",
       tokenId: null,
     });
     expect(log.mock.calls.map((c) => c[0])).toEqual([
-      `[tool-door] via=on-behalf cp=bookinglab org=${ORG} sub=${USER} agent=private tool=examplelab_list_notes outcome=ok jti=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1`,
-      `[tool-door] via=api-key cp=- org=${ORG} sub=- agent=- tool=examplelab_get_note outcome=error jti=-`,
+      `[tool-door] via=on-behalf cp=bookinglab org=${ORG} sub=${USER} agent=private tool=probelab_list_notes outcome=ok jti=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1`,
+      `[tool-door] via=api-key cp=- org=${ORG} sub=- agent=- tool=probelab_get_note outcome=error jti=-`,
     ]);
   });
 });

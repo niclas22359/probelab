@@ -6,9 +6,9 @@
 # would silently break retention. tests/unit/headless-notes.test.ts
 # feeds this exact body through the route and checks it really deletes.
 #
-# Install on the host: copy to /opt/scripts/examplelab-expire-notes.sh,
+# Install on the host: copy to /opt/scripts/probelab-expire-notes.sh,
 # chmod 750, one line in /etc/cron.d/beyondles-jobs, e.g.
-#   30 2 * * * root /opt/scripts/examplelab-expire-notes.sh /opt/examplelab/production
+#   30 2 * * * root /opt/scripts/probelab-expire-notes.sh /opt/probelab/production
 # Needs in that .env: APP_PORT and EXPIRE_NOTES_WORKER_KEY (a WORKER key of
 # this Lab with write + notes:delete, created in the Lab's settings).
 # Exit 1 on anything but HTTP 200; the route itself logs the job line,

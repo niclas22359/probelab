@@ -78,7 +78,7 @@ describe("callTool", () => {
       return new Response(JSON.stringify({ data: [] }), { status: 200 });
     }) as unknown as typeof fetch;
 
-    await callTool(keyContext("http://127.0.0.1:3000", "examplelab_key", fetchImpl), `${LAB_KEY}_list_notes`, {});
+    await callTool(keyContext("http://127.0.0.1:3000", "probelab_key", fetchImpl), `${LAB_KEY}_list_notes`, {});
     await callTool(
       {
         baseUrl: "http://127.0.0.1:3000",
@@ -96,7 +96,7 @@ describe("callTool", () => {
       `${LAB_KEY}_create_note`,
       { title: "T" },
     );
-    expect(seen[0]).toEqual({ "x-api-key": "examplelab_key" });
+    expect(seen[0]).toEqual({ "x-api-key": "probelab_key" });
     expect(seen[1]).toEqual({ authorization: "Bearer the.on-behalf.token", "Content-Type": "application/json" });
   });
 

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # ---------------------------------------------------------------------------
-# ExampleLab — container build (Beyondles Lab frame, Playground server).
+# ProbeLab — container build (Beyondles Lab frame, Playground server).
 #
 # Three targets:
 #   builder   — builds the standalone bundle (`next build`, output: "standalone")

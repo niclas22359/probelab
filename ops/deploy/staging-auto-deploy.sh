@@ -1,10 +1,10 @@
 #!/bin/bash
 # ---------------------------------------------------------------------------
-# Poll-based auto-deploy for EXAMPLELAB STAGING (develop -> :__STAGING_PORT__)
+# Poll-based auto-deploy for PROBELAB STAGING (develop -> :__STAGING_PORT__)
 # on the Playground server. Cron runs this every 2 minutes; silent when idle.
 # NO `git clean` (the untracked .env lives at the repo root). NO seed, ever.
 #
-# Install: copy to /opt/scripts/examplelab-staging-auto-deploy.sh, replace
+# Install: copy to /opt/scripts/probelab-staging-auto-deploy.sh, replace
 # __STAGING_PORT__, chmod 750, add to /etc/cron.d/beyondles-autodeploy.
 # ---------------------------------------------------------------------------
 set -u
@@ -29,11 +29,11 @@ _beyondles_alert_on_exit() {
 }
 trap _beyondles_alert_on_exit EXIT
 # ---------------------------------------------------------------------------
-REPO="/opt/examplelab/staging"
+REPO="/opt/probelab/staging"
 BRANCH="develop"
 PORT="__STAGING_PORT__"
-LOG="/var/log/examplelab-staging-autodeploy.log"
-LOCK="/tmp/examplelab-staging-autodeploy.lock"
+LOG="/var/log/probelab-staging-autodeploy.log"
+LOCK="/tmp/probelab-staging-autodeploy.lock"
 
 exec 9>"$LOCK"
 flock -n 9 || exit 0

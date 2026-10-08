@@ -7,10 +7,10 @@
  * tokens for this Lab and the name of the Lab's platform service key.
  * `npm run rename` replaces it everywhere.
  */
-export const LAB_KEY = "examplelab";
+export const LAB_KEY = "probelab";
 
 /** Display name for people (title, navigation, notices). */
-export const LAB_NAME = "ExampleLab";
+export const LAB_NAME = "ProbeLab";
 
 /**
  * Prefix of API keys this Lab issues, so a leaked key is recognisable.

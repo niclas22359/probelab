@@ -1,13 +1,13 @@
-# ExampleLab as a tool for agents (MCP)
+# ProbeLab as a tool for agents (MCP)
 
 Two ways in, one tool catalogue:
 
-- **HTTP** — `POST https://examplelab.beyondles.ai/api/mcp`. Stateless, JSON answers.
+- **HTTP** — `POST https://probelab.beyondles.ai/api/mcp`. Stateless, JSON answers.
   Two credentials, never both in one request (`400 ambiguous_credential`):
-  - `x-api-key: examplelab_…` — a key created in the Lab's settings.
+  - `x-api-key: probelab_…` — a key created in the Lab's settings.
   - `Authorization: Bearer <on-behalf token>` — what Beyondles HorAIzon and
     other Labs use. The platform issues the token (`POST /api/on-behalf/token`
-    with the caller's own service key, `audience: "examplelab"`); it lives five
+    with the caller's own service key, `audience: "probelab"`); it lives five
     minutes and names the organisation and, where there is one, the person and
     the agent. Nobody pastes a key between products.
 - **stdio** — this folder. A thin bridge for Claude Desktop / Claude Code that
@@ -18,7 +18,7 @@ Two ways in, one tool catalogue:
 
 ```bash
 cd mcp && npm ci
-EXAMPLELAB_URL=https://examplelab.beyondles.ai EXAMPLELAB_API_KEY=examplelab_… node server.mjs --list
+PROBELAB_URL=https://probelab.beyondles.ai PROBELAB_API_KEY=probelab_… node server.mjs --list
 ```
 
 `--list` prints the tool names and is at the same time the proof that address
@@ -29,10 +29,10 @@ Claude Desktop / Claude Code configuration:
 ```json
 {
   "mcpServers": {
-    "examplelab": {
+    "probelab": {
       "command": "node",
-      "args": ["/path/to/examplelab/mcp/server.mjs"],
-      "env": { "EXAMPLELAB_URL": "https://examplelab.beyondles.ai", "EXAMPLELAB_API_KEY": "examplelab_…" }
+      "args": ["/path/to/probelab/mcp/server.mjs"],
+      "env": { "PROBELAB_URL": "https://probelab.beyondles.ai", "PROBELAB_API_KEY": "probelab_…" }
     }
   }
 }
@@ -40,13 +40,13 @@ Claude Desktop / Claude Code configuration:
 
 ## Describe the door
 
-`GET https://examplelab.beyondles.ai/api/mcp/describe` with the same credential
+`GET https://probelab.beyondles.ai/api/mcp/describe` with the same credential
 lists every tool with its title (German and English), what it does (`access`:
 `read`, `write` or `destructive`; `idempotent`; `capability`) and whether the
 credential covers it (`available`):
 
 ```bash
-curl -s https://examplelab.beyondles.ai/api/mcp/describe -H "x-api-key: examplelab_…" \
+curl -s https://probelab.beyondles.ai/api/mcp/describe -H "x-api-key: probelab_…" \
   | jq -r '.tools[] | "\(.name) \(.access)"'
 ```
 

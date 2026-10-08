@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "ExampleLab",
+    "appName": "ProbeLab",
     "save": "Speichern",
     "create": "Anlegen",
     "delete": "Löschen",
@@ -67,13 +67,13 @@
     "keyScopes": "Erlaubt (neue Schlüssel: nur lesen)"
   },
   "noAccess": {
-    "title": "Kein Zugriff auf ExampleLab",
-    "body": "ExampleLab ist dir noch nicht zugeteilt. Ein Admin deiner Organisation gibt es dir in der Beyondles Suite unter Verwaltung, Produkte und Zugang.",
-    "titleBlocked": "ExampleLab ist noch nicht freigegeben",
-    "bodyBlocked": "ExampleLab ist für dein Konto in der Beyondles Suite noch nicht freigegeben.",
-    "bodyUnreachable": "Die Beyondles Suite ist gerade nicht erreichbar, deshalb bleibt ExampleLab vorsichtshalber geschlossen. Bitte versuche es später noch einmal.",
-    "titleNotConfigured": "ExampleLab ist hier noch nicht fertig eingerichtet",
-    "bodyNotConfigured": "Diese Umgebung kann die Beyondles-Plattform nicht fragen, wer ExampleLab benutzen darf, deshalb bleibt es für alle geschlossen. Das liegt nicht an deinem Konto. Der Betreiber setzt PLATFORM_API_URL und PLATFORM_API_KEY und startet neu.",
+    "title": "Kein Zugriff auf ProbeLab",
+    "body": "ProbeLab ist dir noch nicht zugeteilt. Ein Admin deiner Organisation gibt es dir in der Beyondles Suite unter Verwaltung, Produkte und Zugang.",
+    "titleBlocked": "ProbeLab ist noch nicht freigegeben",
+    "bodyBlocked": "ProbeLab ist für dein Konto in der Beyondles Suite noch nicht freigegeben.",
+    "bodyUnreachable": "Die Beyondles Suite ist gerade nicht erreichbar, deshalb bleibt ProbeLab vorsichtshalber geschlossen. Bitte versuche es später noch einmal.",
+    "titleNotConfigured": "ProbeLab ist hier noch nicht fertig eingerichtet",
+    "bodyNotConfigured": "Diese Umgebung kann die Beyondles-Plattform nicht fragen, wer ProbeLab benutzen darf, deshalb bleibt es für alle geschlossen. Das liegt nicht an deinem Konto. Der Betreiber setzt PLATFORM_API_URL und PLATFORM_API_KEY und startet neu.",
     "titleAllowed": "Du hast Zugriff",
     "bodyAllowed": "Diese Seite ist nur ein Hinweis. Dein Konto ist freigeschaltet.",
     "signedInAs": "Angemeldet als {email} in der Organisation {organisation}.",

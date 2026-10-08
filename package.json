@@ -1,8 +1,8 @@
 {
-  "name": "examplelab",
+  "name": "probelab",
   "version": "0.1.0",
   "private": true,
-  "description": "ExampleLab — a Beyondles Lab built from the beyondles-lab template.",
+  "description": "ProbeLab — a Beyondles Lab built from the beyondles-lab template.",
   "scripts": {
     "dev": "next dev -p 3390",
     "build": "next build",
