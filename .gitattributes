@@ -1,0 +1,15 @@
+# LF in the repo. Windows checkouts convert to CRLF and back, so switching
+# machines never produces diffs that consist of line endings only.
+* text=auto eol=lf
+
+# Binary files are left alone.
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.ico binary
+
+# Generated from beyondles-ai/beyondles-shared (share-ui). Never edited here.
+src/components/share/** text eol=lf
+
+# Generated from beyondles-ai/beyondles-shared (platform-client). Never edited here.
+src/lib/platform-client/** text eol=lf

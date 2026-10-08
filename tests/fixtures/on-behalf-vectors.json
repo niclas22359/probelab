@@ -1,0 +1,55 @@
+{
+  "comment": "TEST ONLY. Vectors of the connection layer contract, section 1.7. This key pair was generated for the contract, protects nothing and must never be configured on a server.",
+  "keyId": "test-only-1",
+  "privateKey": "MC4CAQAwBQYDK2VwBCIEIAAcU6RQb_Jvgke4Z6A28TLVeUIu_7MMB_3k9zq7gs2a",
+  "issuer": "beyondles-platform:test",
+  "audience": "connections",
+  "keyDocument": {
+    "issuer": "beyondles-platform:test",
+    "keys": [
+      {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "kid": "test-only-1",
+        "use": "sig",
+        "alg": "EdDSA",
+        "x": "PivcNWncyG48L6g1nCg9ve8TB8t84Su-D87pb23PKKA"
+      }
+    ]
+  },
+  "nowMs": 1790000010000,
+  "claims": {
+    "VALID": {
+      "iss": "beyondles-platform:test",
+      "aud": "connections",
+      "cp": "horaizon",
+      "org": "11111111-1111-4111-8111-111111111111",
+      "sub": "33333333-3333-4333-8333-333333333333",
+      "role": "member",
+      "jti": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+      "iat": 1790000000,
+      "exp": 1790000300
+    },
+    "VALID_AGENT": {
+      "iss": "beyondles-platform:test",
+      "aud": "connections",
+      "cp": "horaizon",
+      "org": "11111111-1111-4111-8111-111111111111",
+      "agt": {
+        "id": "agent-7",
+        "level": "collection",
+        "col": "55555555-5555-4555-8555-555555555555"
+      },
+      "jti": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+      "iat": 1790000000,
+      "exp": 1790000300
+    }
+  },
+  "tokens": {
+    "VALID": "eyJhbGciOiJFZERTQSIsInR5cCI6ImJleW9uZGxlcy1vYm8rand0Iiwia2lkIjoidGVzdC1vbmx5LTEifQ.eyJpc3MiOiJiZXlvbmRsZXMtcGxhdGZvcm06dGVzdCIsImF1ZCI6ImNvbm5lY3Rpb25zIiwiY3AiOiJob3JhaXpvbiIsIm9yZyI6IjExMTExMTExLTExMTEtNDExMS04MTExLTExMTExMTExMTExMSIsInN1YiI6IjMzMzMzMzMzLTMzMzMtNDMzMy04MzMzLTMzMzMzMzMzMzMzMyIsInJvbGUiOiJtZW1iZXIiLCJqdGkiOiJhYWFhYWFhYS1hYWFhLTRhYWEtOGFhYS1hYWFhYWFhYWFhYTEiLCJpYXQiOjE3OTAwMDAwMDAsImV4cCI6MTc5MDAwMDMwMH0.jhFDmdKCz9oaBI1tAM8psEzy_HNT7vhNSNOM1b1HEnu4xBqLymicRcm0XC_YVI1no7EnQWUjJii0WhH2VnWWDw",
+    "VALID_AGENT": "eyJhbGciOiJFZERTQSIsInR5cCI6ImJleW9uZGxlcy1vYm8rand0Iiwia2lkIjoidGVzdC1vbmx5LTEifQ.eyJpc3MiOiJiZXlvbmRsZXMtcGxhdGZvcm06dGVzdCIsImF1ZCI6ImNvbm5lY3Rpb25zIiwiY3AiOiJob3JhaXpvbiIsIm9yZyI6IjExMTExMTExLTExMTEtNDExMS04MTExLTExMTExMTExMTExMSIsImFndCI6eyJpZCI6ImFnZW50LTciLCJsZXZlbCI6ImNvbGxlY3Rpb24iLCJjb2wiOiI1NTU1NTU1NS01NTU1LTQ1NTUtODU1NS01NTU1NTU1NTU1NTUifSwianRpIjoiYWFhYWFhYWEtYWFhYS00YWFhLThhYWEtYWFhYWFhYWFhYWEyIiwiaWF0IjoxNzkwMDAwMDAwLCJleHAiOjE3OTAwMDAzMDB9.RS-nfyuHGMMUYfQcMGBTfcyt4WblYoEvj0QUIqHqacVsS6_N1T-i-JNPlOCdIWB-vkYI8YPRgGbmw6ngIu8MAQ",
+    "EXPIRED": "eyJhbGciOiJFZERTQSIsInR5cCI6ImJleW9uZGxlcy1vYm8rand0Iiwia2lkIjoidGVzdC1vbmx5LTEifQ.eyJpc3MiOiJiZXlvbmRsZXMtcGxhdGZvcm06dGVzdCIsImF1ZCI6ImNvbm5lY3Rpb25zIiwiY3AiOiJob3JhaXpvbiIsIm9yZyI6IjExMTExMTExLTExMTEtNDExMS04MTExLTExMTExMTExMTExMSIsInN1YiI6IjMzMzMzMzMzLTMzMzMtNDMzMy04MzMzLTMzMzMzMzMzMzMzMyIsInJvbGUiOiJtZW1iZXIiLCJqdGkiOiJhYWFhYWFhYS1hYWFhLTRhYWEtOGFhYS1hYWFhYWFhYWFhYTMiLCJpYXQiOjE3ODk5OTY0MDAsImV4cCI6MTc4OTk5NjcwMH0.MBCN3qR06uRkrkxYjIzFIFTJbZBf9dWydtRFd_bH8rbcCapPOA8pIdNrKaalrzpPNhjsOZ5kmR88iPTraMQlDQ",
+    "WRONG_AUDIENCE": "eyJhbGciOiJFZERTQSIsInR5cCI6ImJleW9uZGxlcy1vYm8rand0Iiwia2lkIjoidGVzdC1vbmx5LTEifQ.eyJpc3MiOiJiZXlvbmRsZXMtcGxhdGZvcm06dGVzdCIsImF1ZCI6ImxlYWRsYWIiLCJjcCI6ImhvcmFpem9uIiwib3JnIjoiMTExMTExMTEtMTExMS00MTExLTgxMTEtMTExMTExMTExMTExIiwic3ViIjoiMzMzMzMzMzMtMzMzMy00MzMzLTgzMzMtMzMzMzMzMzMzMzMzIiwicm9sZSI6Im1lbWJlciIsImp0aSI6ImFhYWFhYWFhLWFhYWEtNGFhYS04YWFhLWFhYWFhYWFhYWFhNCIsImlhdCI6MTc5MDAwMDAwMCwiZXhwIjoxNzkwMDAwMzAwfQ.9uqW7H2gSQpALfvNZf9aBNDehL94tcsNeFeypshRndv05TC0R5TW15jasz3ON76H9VK70FJtyBBkdAje00jaAA",
+    "WRONG_ISSUER": "eyJhbGciOiJFZERTQSIsInR5cCI6ImJleW9uZGxlcy1vYm8rand0Iiwia2lkIjoidGVzdC1vbmx5LTEifQ.eyJpc3MiOiJiZXlvbmRsZXMtcGxhdGZvcm06b3RoZXIiLCJhdWQiOiJjb25uZWN0aW9ucyIsImNwIjoiaG9yYWl6b24iLCJvcmciOiIxMTExMTExMS0xMTExLTQxMTEtODExMS0xMTExMTExMTExMTEiLCJzdWIiOiIzMzMzMzMzMy0zMzMzLTQzMzMtODMzMy0zMzMzMzMzMzMzMzMiLCJyb2xlIjoibWVtYmVyIiwianRpIjoiYWFhYWFhYWEtYWFhYS00YWFhLThhYWEtYWFhYWFhYWFhYWE1IiwiaWF0IjoxNzkwMDAwMDAwLCJleHAiOjE3OTAwMDAzMDB9.GwjxdLDcWHnmy_SNyuNiKBUpXBmMal6GK0WIqPZ3UJSZdoFpUst8AArtbWR-FDw93xgA37xs_ys6UoRNm7MGAw"
+  }
+}

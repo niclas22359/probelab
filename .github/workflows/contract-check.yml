@@ -1,0 +1,48 @@
+name: Contract check
+
+# Lab learnings (Masoud, 30.09.2026, rule 15): one real, cheap call per
+# platform edge against STAGING, once a day, with an alert. Lab tests use a
+# fake door; this is the only check that the real edges still answer.
+#
+# Repo secrets a HUMAN must set (Settings > Secrets and variables > Actions),
+# staging values, from Bitwarden "Beyondles Infrastruktur":
+#   PLATFORM_API_URL            https://api-staging.beyondles.ai
+#   PLATFORM_API_KEY            the Lab's STAGING service key
+#   NEXT_PUBLIC_PLATFORM_URL    https://suite-staging.beyondles.ai
+#   PLATFORM_EXPORT_KEY         the Lab's STAGING export key
+#   CONTRACT_LAB_URL            the Lab's staging address
+#   CONTRACT_ORGANISATION_ID    the staging test organisation (uuid)
+#   OPS_ALERT_EMAIL             alerts@beyondles.ai
+#   OPS_ALERT_ORGANISATION_ID   platform organisation the alert mail is booked to
+# A missing secret makes the edge "missing" and the run red, on purpose.
+# The template repo itself has no staging Lab, so the job does not run there.
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: Contract check · staging
+    if: github.repository != 'beyondles-ai/beyondles-lab'
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://build:build@localhost:5432/build
+      PLATFORM_API_URL: ${{ secrets.PLATFORM_API_URL }}
+      PLATFORM_API_KEY: ${{ secrets.PLATFORM_API_KEY }}
+      NEXT_PUBLIC_PLATFORM_URL: ${{ secrets.NEXT_PUBLIC_PLATFORM_URL }}
+      PLATFORM_EXPORT_KEY: ${{ secrets.PLATFORM_EXPORT_KEY }}
+      CONTRACT_LAB_URL: ${{ secrets.CONTRACT_LAB_URL }}
+      CONTRACT_ORGANISATION_ID: ${{ secrets.CONTRACT_ORGANISATION_ID }}
+      OPS_ALERT_EMAIL: ${{ secrets.OPS_ALERT_EMAIL }}
+      OPS_ALERT_ORGANISATION_ID: ${{ secrets.OPS_ALERT_ORGANISATION_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run contract:check

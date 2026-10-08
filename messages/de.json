@@ -1,0 +1,138 @@
+{
+  "common": {
+    "appName": "ExampleLab",
+    "save": "Speichern",
+    "create": "Anlegen",
+    "delete": "Löschen",
+    "loading": "Lädt …",
+    "error": "Etwas ist schiefgelaufen.",
+    "yes": "Ja",
+    "no": "Nein"
+  },
+  "nav": {
+    "backToSuite": "Zurück zur Suite",
+    "dashboard": "Übersicht",
+    "notes": "Notizen",
+    "settings": "Einstellungen"
+  },
+  "dashboard": {
+    "title": "Übersicht",
+    "intro": "Das ist die Einstiegsseite deines Labs. Ersetze sie durch das, was dein Lab tut.",
+    "signedInAs": "Angemeldet als {email} in der Organisation {organisation}.",
+    "doorState": "Plattform-Tür: {state}",
+    "notesCount": "{count, plural, =0 {Noch keine Notizen} one {# Notiz} other {# Notizen}} für dich sichtbar."
+  },
+  "notes": {
+    "title": "Notizen",
+    "intro": "Ein Beispiel für ein mandantengebundenes Objekt mit Sichtbarkeit. Alles, was du hier tun kannst, gibt es auch unter /api/v1/notes und als MCP-Werkzeug.",
+    "newTitle": "Titel",
+    "newBody": "Text",
+    "create": "Notiz anlegen",
+    "empty": "Noch keine Notizen für dich sichtbar.",
+    "ownerYou": "du",
+    "created": "Angelegt {date}",
+    "back": "Zurück zu den Notizen",
+    "save": "Speichern",
+    "delete": "Endgültig löschen",
+    "readOnly": "Du kannst diese Notiz sehen, aber nicht ändern.",
+    "errors": {
+      "not_found": "Diese Notiz gibt es nicht oder du kannst sie nicht sehen.",
+      "forbidden": "Das darfst du mit dieser Notiz nicht tun.",
+      "invalid_request": "Bitte prüfe deine Eingaben.",
+      "conflict": "Die Notiz wurde zwischendurch geändert. Bitte neu laden.",
+      "container_required": "Bitte wähle, wer die Notiz sehen darf.",
+      "internal_error": "Etwas ist schiefgegangen. Bitte versuche es noch einmal."
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "apiKeysTitle": "API-Schlüssel",
+    "apiKeysIntro": "Schlüssel für Maschinen und Agenten. Ein Schlüssel handelt in der Sicht der Person, die ihn angelegt hat; ein Worker-Schlüssel sieht nur organisationsweite Zeilen. Der Klartext wird genau einmal angezeigt.",
+    "keyName": "Name",
+    "keyKind": "Art",
+    "keyKindUser": "Handelt als ich",
+    "keyKindWorker": "Worker (nur organisationsweit)",
+    "createKey": "Schlüssel anlegen",
+    "keyCreated": "Neuer Schlüssel angelegt. Jetzt kopieren, er wird nicht noch einmal angezeigt (dieses Feld verschwindet nach einer Minute):",
+    "keyCopied": "Ich habe ihn kopiert",
+    "revoke": "Widerrufen",
+    "revoked": "widerrufen",
+    "noKeys": "Noch keine Schlüssel.",
+    "teamTitle": "Team",
+    "teamBody": "Wer in deiner Organisation ist und wer dieses Lab benutzen darf, wird in der Beyondles Suite verwaltet, nicht hier.",
+    "teamLink": "Suite öffnen",
+    "scopeRead": "Lesen",
+    "scopeWrite": "Anlegen und ändern",
+    "scopeFull": "Voller Zugriff (älterer Schlüssel, bitte ersetzen)",
+    "keyScopes": "Erlaubt (neue Schlüssel: nur lesen)"
+  },
+  "noAccess": {
+    "title": "Kein Zugriff auf ExampleLab",
+    "body": "ExampleLab ist dir noch nicht zugeteilt. Ein Admin deiner Organisation gibt es dir in der Beyondles Suite unter Verwaltung, Produkte und Zugang.",
+    "titleBlocked": "ExampleLab ist noch nicht freigegeben",
+    "bodyBlocked": "ExampleLab ist für dein Konto in der Beyondles Suite noch nicht freigegeben.",
+    "bodyUnreachable": "Die Beyondles Suite ist gerade nicht erreichbar, deshalb bleibt ExampleLab vorsichtshalber geschlossen. Bitte versuche es später noch einmal.",
+    "titleNotConfigured": "ExampleLab ist hier noch nicht fertig eingerichtet",
+    "bodyNotConfigured": "Diese Umgebung kann die Beyondles-Plattform nicht fragen, wer ExampleLab benutzen darf, deshalb bleibt es für alle geschlossen. Das liegt nicht an deinem Konto. Der Betreiber setzt PLATFORM_API_URL und PLATFORM_API_KEY und startet neu.",
+    "titleAllowed": "Du hast Zugriff",
+    "bodyAllowed": "Diese Seite ist nur ein Hinweis. Dein Konto ist freigeschaltet.",
+    "signedInAs": "Angemeldet als {email} in der Organisation {organisation}.",
+    "toApp": "Zur Übersicht",
+    "toSuite": "Zurück zur Beyondles Suite"
+  },
+  "share": {
+    "adminNote": "Der Verwalter sieht Titel, Besitzer und Verbrauch, nie den Inhalt.",
+    "picker": {
+      "legend": "Wer sieht das?",
+      "private": "Nur ich",
+      "privateHint": "Bleibt bei dir, bis du es freigibst.",
+      "privateBlocked": "Deine Organisation hat „Nur ich“ für dieses Produkt ausgeschaltet.",
+      "personalOffExisting": "Persönliche Objekte sind in deiner Organisation abgeschaltet; wähle eine Sammlung oder die ganze Organisation.",
+      "personalOffNoWayOut": "Persönliche Objekte sind in deiner Organisation abgeschaltet. Es gibt aber noch keine Sammlung, und an die ganze Organisation darfst du nicht freigeben. Bitte deinen Verwalter um eine Sammlung oder um das Recht, an alle freizugeben. Bearbeiten kannst du das Objekt weiterhin.",
+      "collection": "Eine Sammlung",
+      "collectionHint": "Alle Personen in der gewählten Sammlung sehen es.",
+      "collectionBlocked": "Es gibt noch keine Sammlung.",
+      "collectionSelectLabel": "Sammlung",
+      "organisation": "Die ganze Organisation",
+      "organisationHint": "Jedes Mitglied deiner Organisation sieht es.",
+      "organisationBlocked": "Deine Organisation erlaubt Mitgliedern nicht, an alle freizugeben."
+    },
+    "badge": {
+      "private": "Nur ich",
+      "collection": "Eine Sammlung",
+      "collectionNamed": "Sammlung {name}",
+      "organisation": "Die ganze Organisation"
+    },
+    "people": {
+      "searchLabel": "Person hinzufügen",
+      "searchPlaceholder": "Name oder E-Mail",
+      "noMatches": "Keine passende Person gefunden.",
+      "moreHint": "{count, plural, one {Noch eine weitere Person. Bitte den Namen eintippen.} other {Noch # weitere Personen. Bitte den Namen eintippen.}}",
+      "selectedHeading": "Einzeln hinzugefügt",
+      "empty": "Noch niemand einzeln hinzugefügt.",
+      "levelLabel": "Recht von {name}",
+      "levelView": "Ansehen",
+      "levelEdit": "Bearbeiten",
+      "remove": "{name} entfernen"
+    },
+    "dialog": {
+      "trigger": "Teilen",
+      "viewTrigger": "Wer hat Zugriff",
+      "title": "Teilen: {title}",
+      "close": "Dialog schließen",
+      "ownedBy": "Gehört {name}",
+      "loading": "Wird geladen …",
+      "loadError": "Die Freigaben konnten nicht geladen werden.",
+      "saveError": "Speichern nicht möglich.",
+      "personalConnections": "Dieser Eintrag benutzt deine Verbindung {labels}. Er läuft weiter unter deinem Zugang.",
+      "peopleHeading": "Wer zusätzlich Zugriff hat",
+      "readOnlyNote": "Du kannst diese Freigabe nicht ändern.",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "closeButton": "Schließen",
+      "discardQuestion": "Ungespeicherte Änderungen verwerfen?",
+      "discardKeep": "Weiter bearbeiten",
+      "discardConfirm": "Verwerfen"
+    }
+  }
+}

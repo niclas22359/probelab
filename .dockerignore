@@ -1,0 +1,12 @@
+# Secrets stay out of the image — they arrive at runtime through Compose.
+.env
+.env.*
+!.env.example
+
+node_modules
+mcp/node_modules
+.next
+.git
+logs
+test-results
+coverage

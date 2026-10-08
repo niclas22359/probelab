@@ -1,0 +1,138 @@
+{
+  "common": {
+    "appName": "ExampleLab",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete",
+    "loading": "Loading …",
+    "error": "Something went wrong.",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "backToSuite": "Back to Suite",
+    "dashboard": "Overview",
+    "notes": "Notes",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Overview",
+    "intro": "This is the entry page of your Lab. Replace it with what your Lab does.",
+    "signedInAs": "Signed in as {email} in organisation {organisation}.",
+    "doorState": "Platform door: {state}",
+    "notesCount": "{count, plural, =0 {No notes yet} one {# note} other {# notes}} visible to you."
+  },
+  "notes": {
+    "title": "Notes",
+    "intro": "A worked example of a tenant object with visibility. Everything you can do here also exists under /api/v1/notes and as an MCP tool.",
+    "newTitle": "Title",
+    "newBody": "Text",
+    "create": "Add note",
+    "empty": "No notes visible to you yet.",
+    "ownerYou": "you",
+    "created": "Created {date}",
+    "back": "Back to notes",
+    "save": "Save",
+    "delete": "Delete permanently",
+    "readOnly": "You can see this note but not change it.",
+    "errors": {
+      "not_found": "This note does not exist or is not visible to you.",
+      "forbidden": "You are not allowed to do that with this note.",
+      "invalid_request": "Please check your input.",
+      "conflict": "The note was changed in the meantime. Please reload.",
+      "container_required": "Please choose who may see the note.",
+      "internal_error": "Something went wrong. Please try again."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "apiKeysTitle": "API keys",
+    "apiKeysIntro": "Keys for machines and agents. A key acts in the view of the person who created it; a worker key sees organisation-wide rows only. The plaintext is shown exactly once.",
+    "keyName": "Name",
+    "keyKind": "Kind",
+    "keyKindUser": "Acts as me",
+    "keyKindWorker": "Worker (organisation-wide only)",
+    "createKey": "Create key",
+    "keyCreated": "New key created. Copy it now, it will not be shown again (this box disappears after one minute):",
+    "keyCopied": "I have copied it",
+    "revoke": "Revoke",
+    "revoked": "revoked",
+    "noKeys": "No keys yet.",
+    "teamTitle": "Team",
+    "teamBody": "Who is in your organisation and who may use this Lab is managed in the Beyondles Suite, not here.",
+    "teamLink": "Open the Suite",
+    "scopeRead": "Read",
+    "scopeWrite": "Create and change",
+    "scopeFull": "Full access (older key, please replace)",
+    "keyScopes": "Allowed (new keys: read only)"
+  },
+  "noAccess": {
+    "title": "No access to ExampleLab",
+    "body": "ExampleLab has not been assigned to you yet. An admin of your organisation gives it to you in the Beyondles Suite under Administration, Products and access.",
+    "titleBlocked": "ExampleLab is not released yet",
+    "bodyBlocked": "ExampleLab has not been released for your account in the Beyondles Suite yet.",
+    "bodyUnreachable": "The Beyondles Suite is currently unreachable, so ExampleLab stays closed as a precaution. Please try again later.",
+    "titleNotConfigured": "ExampleLab is not fully set up here yet",
+    "bodyNotConfigured": "This environment cannot ask the Beyondles platform who may use ExampleLab, so it stays closed for everyone. This is not about your account. The operator sets PLATFORM_API_URL and PLATFORM_API_KEY and restarts.",
+    "titleAllowed": "You have access",
+    "bodyAllowed": "This page is just a notice. Your account is enabled.",
+    "signedInAs": "Signed in as {email} in organisation {organisation}.",
+    "toApp": "Go to overview",
+    "toSuite": "Back to the Beyondles Suite"
+  },
+  "share": {
+    "adminNote": "Admins see title, owner and usage, never the content.",
+    "picker": {
+      "legend": "Who can see this?",
+      "private": "Only me",
+      "privateHint": "Stays with you until you share it.",
+      "privateBlocked": "Your organisation has switched “Only me” off for this product.",
+      "personalOffExisting": "Personal objects are switched off in your organisation; choose a collection or the whole organisation.",
+      "personalOffNoWayOut": "Personal objects are switched off in your organisation. There is no collection yet, and you may not share with the whole organisation. Ask your admin for a collection or for permission to share with everyone. You can keep editing the object.",
+      "collection": "A collection",
+      "collectionHint": "Everyone in the chosen collection sees it.",
+      "collectionBlocked": "There is no collection yet.",
+      "collectionSelectLabel": "Collection",
+      "organisation": "Whole organisation",
+      "organisationHint": "Every member of your organisation sees it.",
+      "organisationBlocked": "Your organisation does not let members share with everyone."
+    },
+    "badge": {
+      "private": "Only me",
+      "collection": "A collection",
+      "collectionNamed": "Collection {name}",
+      "organisation": "Whole organisation"
+    },
+    "people": {
+      "searchLabel": "Add a person",
+      "searchPlaceholder": "Name or e-mail",
+      "noMatches": "No matching person.",
+      "moreHint": "{count, plural, one {One more person. Type a name to narrow it down.} other {# more people. Type a name to narrow it down.}}",
+      "selectedHeading": "Added one by one",
+      "empty": "Nobody added yet.",
+      "levelLabel": "Level for {name}",
+      "levelView": "View",
+      "levelEdit": "Edit",
+      "remove": "Remove {name}"
+    },
+    "dialog": {
+      "trigger": "Share",
+      "viewTrigger": "Who has access",
+      "title": "Share: {title}",
+      "close": "Close dialog",
+      "ownedBy": "Owned by {name}",
+      "loading": "Loading …",
+      "loadError": "The sharing settings could not be loaded.",
+      "saveError": "Saving did not work.",
+      "personalConnections": "This item uses your connection {labels}. It keeps running under your access.",
+      "peopleHeading": "Who else has access",
+      "readOnlyNote": "You cannot change this sharing.",
+      "cancel": "Cancel",
+      "save": "Save",
+      "closeButton": "Close",
+      "discardQuestion": "Discard your unsaved changes?",
+      "discardKeep": "Keep editing",
+      "discardConfirm": "Discard"
+    }
+  }
+}

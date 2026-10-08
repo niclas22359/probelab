@@ -1,0 +1,115 @@
+name: CI Gates
+
+# One job builds the app and delegates to the shared composite action
+# beyondles-ai/beyondles-ci/quality-gates@v1 (named gates plus an enforce step
+# that blocks on every HARD gate and only reports SOFT gates). The job name
+# stays literally "Quality Gates · app" so the required-check context in the
+# branch ruleset remains valid. Bump @v1 to pick up gate changes.
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-gates-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: Quality Gates · app
+    runs-on: ubuntu-latest
+    # Build-only placeholders — NO real secrets, never deployed. `npm ci`
+    # already runs postinstall `prisma generate`, which reads DATABASE_URL
+    # through prisma.config.ts, so the variable sits at job level.
+    env:
+      DATABASE_URL: postgresql://build:build@localhost:5432/build
+      JWT_SECRET: build-only-placeholder
+      ALLOW_LOCAL_JWT: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      # Inside beyondles-ai: the shared quality gates (named gates, score,
+      # soft gates PLACEHOLDER/AUDIT/ANY). The action lives in a PRIVATE repo,
+      # so a Lab built OUTSIDE the organisation (docs/BUILDING.md) runs the
+      # same hard gates as plain steps below instead. Both paths block on
+      # TYPE, BUILD, LINT and UNIT.
+      - uses: beyondles-ai/beyondles-ci/quality-gates@v1
+        if: github.repository_owner == 'beyondles-ai'
+        with:
+          label: app
+          install-cmd: npm ci
+          gates: TYPE,BUILD,LINT,UNIT,PLACEHOLDER,AUDIT,ANY
+          soft-gates: PLACEHOLDER,AUDIT,ANY
+          type-cmd: npm run typecheck
+          build-cmd: npm run build
+          lint-cmd: npm run lint
+          unit-cmd: npm test
+          placeholder-roots: src
+          any-roots: src
+          any-baseline: "0"
+          build-env: |
+            DATABASE_URL=postgresql://build:build@localhost:5432/build
+            JWT_SECRET=build-only-placeholder
+            ALLOW_LOCAL_JWT=true
+      - name: Install (outside beyondles-ai)
+        if: github.repository_owner != 'beyondles-ai'
+        run: npm ci
+      - name: Type check (outside beyondles-ai)
+        if: github.repository_owner != 'beyondles-ai'
+        run: npm run typecheck
+      - name: Lint (outside beyondles-ai)
+        if: github.repository_owner != 'beyondles-ai'
+        run: npm run lint
+      - name: Unit tests (outside beyondles-ai)
+        if: github.repository_owner != 'beyondles-ai'
+        run: npm test
+      - name: Build (outside beyondles-ai)
+        if: github.repository_owner != 'beyondles-ai'
+        run: npm run build
+      - name: Frame self-check
+        run: npm run check:frame
+      # The shared-code check needs the private beyondles-shared repo; outside
+      # the organisation the generated files are compared on intake instead.
+      - name: Shared code is unchanged
+        if: github.repository_owner == 'beyondles-ai'
+        uses: beyondles-ai/beyondles-shared/check@v1.1.1
+
+  # Lab learnings (Masoud, 30.09.2026, rule 6): migrations had never run on a
+  # database at merge time. This job applies every migration to a real,
+  # empty Postgres and runs the database tests (tests/db) against it. Add it
+  # as a required check in the branch ruleset next to "Quality Gates · app".
+  # No Windows job: nothing in the template is OS-specific (Linux containers
+  # only, no paths or shell of the host in the app). A Lab that runs a part
+  # on Windows (an ingest on a PC) adds `runs-on: windows-latest` for it.
+  migrations:
+    name: Migrations · postgres
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: labtemplate_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ci -d labtemplate_ci"
+          --health-interval 5s --health-timeout 3s --health-retries 12
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/labtemplate_ci
+      TEST_DATABASE_URL: postgresql://ci:ci@localhost:5432/labtemplate_ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Apply every migration to an empty database
+        run: npx prisma migrate deploy
+      - name: Schema and migrations agree
+        run: npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+      - name: Database tests
+        run: npx vitest run tests/db

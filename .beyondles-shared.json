@@ -1,0 +1,11 @@
+{
+  "version": "1.1.1",
+  "modules": [
+    { "name": "share-ui", "dest": "src/components/share" },
+    { "name": "platform-client", "dest": "src/lib/platform-client", "parts": ["core", "next"] }
+  ],
+  "messages": {
+    "en": { "file": "messages/en.json" },
+    "de": { "file": "messages/de.json", "variant": "du" }
+  }
+}

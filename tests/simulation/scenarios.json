@@ -1,0 +1,39 @@
+{
+  "$comment": "Scripted flows for scripts/simulate.ts (docs/SIMULATION.md). Replace with the Lab's real main paths. {{prev.<field>}} is a field of the most recent step that returned data.",
+  "scenarios": [
+    {
+      "id": "create-and-read-note",
+      "goal": "A note created through the API can be read back with the same title and body.",
+      "steps": [
+        { "method": "POST", "path": "/api/v1/notes", "body": { "title": "Simulation note", "body": "Created by the simulation harness." } },
+        { "method": "GET", "path": "/api/v1/notes/{{prev.id}}" }
+      ]
+    },
+    {
+      "id": "update-note",
+      "goal": "Changing the title of a note is visible when the note is read again.",
+      "steps": [
+        { "method": "POST", "path": "/api/v1/notes", "body": { "title": "Before", "body": "x" } },
+        { "method": "PATCH", "path": "/api/v1/notes/{{prev.id}}", "body": { "title": "After" } },
+        { "method": "GET", "path": "/api/v1/notes/{{prev.id}}" }
+      ]
+    },
+    {
+      "id": "delete-note",
+      "goal": "A deleted note is gone: reading it afterwards answers not found.",
+      "steps": [
+        { "method": "POST", "path": "/api/v1/notes", "body": { "title": "To delete", "body": "x" } },
+        { "method": "DELETE", "path": "/api/v1/notes/{{prev.id}}" },
+        { "method": "GET", "path": "/api/v1/notes/{{prev.id}}" }
+      ]
+    },
+    {
+      "id": "list-notes",
+      "goal": "The list of notes answers successfully and contains a note created just before.",
+      "steps": [
+        { "method": "POST", "path": "/api/v1/notes", "body": { "title": "Listed", "body": "x" } },
+        { "method": "GET", "path": "/api/v1/notes" }
+      ]
+    }
+  ]
+}

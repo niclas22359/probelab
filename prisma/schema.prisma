@@ -1,0 +1,122 @@
+// ExampleLab — data model.
+//
+// Tenant separation is NOT enforced by the database but by `src/lib/rbac.ts`
+// and the service layer: every query carries `organisationId`, and every
+// query on a shared object also carries the visibility filter from
+// `src/lib/access-rules.ts`. There is deliberately no way around that layer.
+//
+// Two tables are part of the frame and stay in every Lab:
+//   Organisation — mirror of the Suite organisation (id = Suite uuid)
+//   ApiKey       — machine access (`x-api-key`) for the HTTP and MCP doors
+// `Note` is the worked example of a tenant object with the three container
+// columns (visibility, ownerUserId, collectionId). Replace it with your own
+// objects, keep the three columns.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Prisma 7: the connection URL lives in prisma.config.ts (CLI) and is
+  // passed at runtime through the pg driver adapter (src/lib/db.ts).
+}
+
+/// Who may see a row. Values match the platform's access model (lower-case
+/// on the wire, upper-case in Prisma).
+enum Visibility {
+  /// The owner, plus people with an individual grant from the platform.
+  PRIVATE
+  /// Everybody in `collectionId` (collections are managed on the platform).
+  COLLECTION
+  /// Every person with product access in this organisation.
+  ORGANISATION
+}
+
+enum ApiKeyKind {
+  /// Created for a PERSON: acts in that person's view, dies with their access.
+  USER
+  /// Created for the ORGANISATION: no person behind it, sees only
+  /// organisation-wide rows, survives every single person leaving.
+  WORKER
+}
+
+model Organisation {
+  /// The Suite organisation uuid, taken from the signed-in token. Never a
+  /// local id, never a slug.
+  id        String   @id
+  /// Display values from the Suite. Deliberately NOT unique: they are not
+  /// ours and the Suite may rename them at any time.
+  slug      String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes   Note[]
+  apiKeys ApiKey[]
+
+  @@index([slug])
+  @@map("organisations")
+}
+
+/// Worked example of a tenant object. Every Lab object carries these three
+/// container columns and an owner; `src/lib/access-rules.ts` filters on them.
+model Note {
+  id             String     @id @default(uuid())
+  organisationId String
+  title          String
+  body           String     @default("")
+  /// Suite userId of the person who created the row.
+  ownerUserId    String
+  visibility     Visibility @default(PRIVATE)
+  /// Platform collection id when `visibility = COLLECTION`.
+  collectionId   String?
+  /// Set by the retention job (`src/server/retention/`). Once set, the
+  /// personal columns are blanked for good: a database trigger (migration
+  /// 0003) refuses any UPDATE that writes them back.
+  redactedAt     DateTime?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  organisation Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId, createdAt(sort: Desc)])
+  @@index([organisationId, visibility])
+  @@map("notes")
+}
+
+model ApiKey {
+  id              String     @id @default(uuid())
+  name            String
+  /// sha256 of the plaintext. The plaintext is shown exactly once.
+  keyHash         String     @unique
+  organisationId  String
+  /// Suite userId of the person who created the key and in whose view it
+  /// acts. `null` = worker key (no person behind it).
+  createdByUserId String?
+  kind            ApiKeyKind @default(USER)
+  /// What the key may do (`src/lib/scopes.ts`): `read`, `write`, the Lab's
+  /// extra scopes. New keys: read only. `*` = full access, set by migration
+  /// 0002 on every key that existed before scopes; never stored by the form.
+  scopes          String[]   @default(["read"])
+  createdAt       DateTime   @default(now())
+  lastUsedAt      DateTime?
+  revokedAt       DateTime?
+
+  organisation Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId, createdAt(sort: Desc)])
+  @@map("api_keys")
+}
+
+/// One row per scheduled job (`src/server/jobs/schedule.ts`). Written by
+/// `runJob`; read by the heartbeat job, which alerts when `lastSuccessAt` is
+/// older than the job's window. Not tenant data: no organisation, no person.
+model JobRun {
+  name          String    @id
+  lastRunAt     DateTime
+  lastStatus    String
+  lastSuccessAt DateTime?
+
+  @@map("job_runs")
+}

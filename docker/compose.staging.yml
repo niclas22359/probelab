@@ -1,0 +1,18 @@
+# ---------------------------------------------------------------------------
+# ExampleLab — staging override.
+#
+# Single purpose: OWN image tags. A staging build produces examplelab-app:staging
+# and can never overwrite the production image (examplelab-app:latest).
+# Everything else (port, project name, passwords) is separated by the
+# environment's .env (COMPOSE_PROJECT_NAME=examplelab-staging, APP_PORT).
+#
+# Always call with both files and the staging .env:
+#   docker compose --env-file .env \
+#     -f docker/docker-compose.yml -f docker/compose.staging.yml up -d
+# ---------------------------------------------------------------------------
+
+services:
+  app:
+    image: examplelab-app:staging
+  toolchain:
+    image: examplelab-toolchain:staging

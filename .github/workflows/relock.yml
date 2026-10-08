@@ -1,0 +1,45 @@
+name: Regenerate lockfile (Linux)
+
+# One-off tool, not part of the running CI.
+#
+# Developed on Windows, a lockfile only records the Windows variants of
+# platform-specific optional packages. On the Linux runner they are missing
+# and `npm ci` fails. Run this once (Actions tab or `gh workflow run
+# relock.yml`) to resolve the lockfile on Linux; npm then records ALL
+# platform variants, so Windows development keeps working too.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  DATABASE_URL: postgresql://build:build@localhost:5432/build
+
+jobs:
+  relock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Resolve the lockfile from scratch
+        run: |
+          rm -f package-lock.json
+          npm install --no-audit --no-fund
+      - name: Verify against npm ci
+        run: |
+          rm -rf node_modules
+          npm ci --no-audit --no-fund
+      - name: Commit the change
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "Lockfile already complete — nothing to do."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "fix(ci): resolve lockfile on Linux and verify with npm ci"
+          git push

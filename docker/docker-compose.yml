@@ -1,0 +1,130 @@
+# ---------------------------------------------------------------------------
+# ExampleLab — Compose stack (Playground server, Beyondles Lab frame).
+#
+# ONE stack = ONE environment. Production and staging are TWO separate Compose
+# projects with their own .env (COMPOSE_PROJECT_NAME, APP_PORT, own
+# POSTGRES_PASSWORD). Staging adds docker/compose.staging.yml on top (own image
+# tags ":staging", so a staging build never overwrites the production image).
+#
+#   Production:  docker compose --env-file .env -f docker/docker-compose.yml ...
+#   Staging:     docker compose --env-file .env -f docker/docker-compose.yml \
+#                               -f docker/compose.staging.yml ...
+#
+# Ports bind to 127.0.0.1 only: the public way in is the Cloudflare tunnel.
+#
+# `--env-file .env` fills the placeholders of THIS file only. What reaches the
+# container is exactly what is listed under `environment:`. A variable the
+# code reads but which is missing here is silently unset in production.
+# `tests/unit/deployment-env.test.ts` enforces that every variable the code
+# reads is listed below.
+#
+# NO JWT_SECRET in this stack: sign-in is verified by asking the Suite
+# (src/lib/auth.ts). The platform's signing secret never lives on a Lab host.
+# ---------------------------------------------------------------------------
+
+services:
+  postgres:
+    # Pinned by digest (lab learnings, rule 10). Renew on purpose:
+    #   docker buildx imagetools inspect postgres:16-alpine
+    image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-examplelab}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD missing in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-examplelab}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-examplelab} -d ${POSTGRES_DB:-examplelab}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    mem_limit: 512m
+
+  app:
+    image: ${APP_IMAGE:-examplelab-app:latest}
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: runtime
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-examplelab}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-examplelab}
+      DATABASE_POOL_MAX: ${DATABASE_POOL_MAX:-}
+      # Sign-in and level 1 (release switch): the Suite of THIS environment.
+      # Staging https://suite-staging.beyondles.ai, production https://beyondles.ai.
+      NEXT_PUBLIC_PLATFORM_URL: ${NEXT_PUBLIC_PLATFORM_URL:?NEXT_PUBLIC_PLATFORM_URL missing in .env}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+      # The platform door (levels 2 + 3, AI, mail, protocol). Without these two
+      # the Lab cannot ask the platform about anybody and lets NOBODY in.
+      PLATFORM_API_URL: ${PLATFORM_API_URL:-}
+      PLATFORM_API_KEY: ${PLATFORM_API_KEY:-}
+      # Tenant export for the platform (GET /api/platform/export).
+      PLATFORM_EXPORT_KEY: ${PLATFORM_EXPORT_KEY:-}
+      PLATFORM_DELETE_KEY: ${PLATFORM_DELETE_KEY:-}
+      ON_BEHALF_ISSUER: ${ON_BEHALF_ISSUER:-}
+      # MCP over HTTP: override of the base URL for the self-call to /api/v1.
+      # Empty is the norm (then http://127.0.0.1:${PORT}).
+      MCP_SELF_BASE_URL: ${MCP_SELF_BASE_URL:-}
+      # Rate limit of the machine doors per minute (src/lib/rate-limit.ts).
+      # Empty = default (120 / 60 / 600), 0 = off. Counted per process.
+      API_RATE_LIMIT_PER_MINUTE: ${API_RATE_LIMIT_PER_MINUTE:-}
+      MCP_RATE_LIMIT_PER_MINUTE: ${MCP_RATE_LIMIT_PER_MINUTE:-}
+      ON_BEHALF_RATE_LIMIT_PER_MINUTE: ${ON_BEHALF_RATE_LIMIT_PER_MINUTE:-}
+      # Scheduled jobs (src/server/jobs): ops alerts through the mail door,
+      # retention settings. Dry run unless RETENTION_DRY_RUN says false/0/no.
+      OPS_ALERT_EMAIL: ${OPS_ALERT_EMAIL:-}
+      OPS_ALERT_ORGANISATION_ID: ${OPS_ALERT_ORGANISATION_ID:-}
+      RETENTION_DRY_RUN: ${RETENTION_DRY_RUN:-true}
+      RETENTION_MAX_SHARE: ${RETENTION_MAX_SHARE:-}
+      RETENTION_NOTES_DAYS: ${RETENTION_NOTES_DAYS:-}
+      EXPIRE_NOTES_MAX_SHARE: ${EXPIRE_NOTES_MAX_SHARE:-}
+    ports:
+      - "127.0.0.1:${APP_PORT:?APP_PORT missing in .env — staging and production must not share a port}:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
+    mem_limit: 1g
+
+  # Throw-away container for migrations (Prisma CLI + schema) inside the
+  # Compose network so that the host "postgres" resolves. Explicit start only:
+  #   docker compose ... run --rm --no-deps toolchain npx prisma migrate deploy
+  toolchain:
+    image: ${TOOLCHAIN_IMAGE:-examplelab-toolchain:latest}
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: toolchain
+    profiles:
+      - tools
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-examplelab}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-examplelab}
+      PLATFORM_API_URL: ${PLATFORM_API_URL:-}
+      PLATFORM_API_KEY: ${PLATFORM_API_KEY:-}
+      # Scheduled jobs (src/server/jobs): ops alerts through the mail door,
+      # retention settings. Dry run unless RETENTION_DRY_RUN says false/0/no.
+      OPS_ALERT_EMAIL: ${OPS_ALERT_EMAIL:-}
+      OPS_ALERT_ORGANISATION_ID: ${OPS_ALERT_ORGANISATION_ID:-}
+      RETENTION_DRY_RUN: ${RETENTION_DRY_RUN:-true}
+      RETENTION_MAX_SHARE: ${RETENTION_MAX_SHARE:-}
+      RETENTION_NOTES_DAYS: ${RETENTION_NOTES_DAYS:-}
+      EXPIRE_NOTES_MAX_SHARE: ${EXPIRE_NOTES_MAX_SHARE:-}
+
+volumes:
+  postgres-data:

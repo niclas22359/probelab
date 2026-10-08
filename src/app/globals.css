@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/*
+ * The share blocks (src/components/share, generated from
+ * beyondles-ai/beyondles-shared) use five colour names that Tailwind does not
+ * know. Without them the classes produce no CSS and nothing turns red: text
+ * loses its colour and the selected row loses its background. Defined here on
+ * the template's own zinc palette; a Lab with its own palette points them at
+ * its own variables (LeadLab does). `primary` must stay a real colour value so
+ * that `bg-primary/5` and `ring-primary/30` can be made transparent.
+ */
+@theme inline {
+  --color-content-primary: var(--color-zinc-900);
+  --color-content-secondary: var(--color-zinc-600);
+  --color-content-tertiary: var(--color-zinc-500);
+  --color-surface-secondary: var(--color-zinc-100);
+  --color-primary: var(--color-zinc-900);
+}
+
+/*
+ * Kept deliberately small. The template ships with plain Tailwind utilities
+ * and no component library, so a Lab can bring its own (shadcn, Base UI, …)
+ * without first removing ours. Fonts: system stack; self-host a webfont when
+ * the Lab wants the Beyondles look (see LeadLab `src/app/fonts/`).
+ */
+
+:root {
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
