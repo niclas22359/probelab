@@ -42,7 +42,7 @@ One line per thing that was NOT tried, and why. Be specific: "uploads over
 "load beyond one user". An empty section is a claim that everything was
 tested; the reviewer will check that claim first.
 
-- 
+- Everything beyond the template example: this is a probe Lab for the submission check.
 
 ## Open items
 
